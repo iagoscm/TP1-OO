@@ -28,7 +28,7 @@ public class jogoDaForca {
 		temas[1][2] = "AMAPA";
 		temas[1][3] = "RORAIMA";
 		temas[1][4] = "GOIAS";
-		temas[1][5] = "SÃO PAULO";
+		temas[1][5] = "SAO PAULO";
 		temas[1][6] = "RIO DE JANEIRO";
 		temas[1][7] = "ESPIRITO SANTO";
 		temas[1][8] = "SANTA CATARINA";
@@ -75,11 +75,6 @@ public class jogoDaForca {
 		Scanner input = new Scanner (System.in);
 		System.out.println("Bem vindo(a) ao Jogo da Forca 2022!\n\n");
 		do {
-			for(int i = 0; i < 10; i++) {
-				for(int k = 0; k < 51; k++)
-				System.out.print(temas[i][k] + " ");
-				System.out.println(";");
-			}
 				c = menu(opcao_menu, input);// Abrir o menu
 				switch(c) {
 				case '1':
@@ -133,7 +128,8 @@ public class jogoDaForca {
 		System.out.println("\nPressione Enter para continuar...");
 		System.in.read();
 		input.nextLine();
-		System.out.println("\n--------------------Jogo da Forca--------------------");
+		System.out.println("              Jogo da Forca");
+		System.out.println("\n----------------------------------------");
 		System.out.println("1. Gerenciar Temas");
 		System.out.println("2. Gerenciar Palavras");
 		System.out.println("3. Jogar");
@@ -318,28 +314,24 @@ public class jogoDaForca {
 						System.out.print("Digite a palavra que deseja excluir:");
 						input.nextLine();
 						busca = input.nextLine().toUpperCase().trim();
-						for(int k = 1; k < 51; k++) 
+						for(int k = 1; k < 51; k++) {
 							if(temas[i][k] != null) {
 								if(temas[i][k].equals(busca)) {
 									System.out.println("Palavra excluída com sucesso do tema " + temas[i][0] + "!");
+									contaExclusao++;
+									contaPalavra++;
 								}else{
-									if(temas[i][j] != temas[i][k]) {
-										System.out.println("a" + temas[i][j]);
-										System.out.println("b" + temas[i][k]);
-										temas[i][j] = temas[i][k];
-									}else{
-										System.out.println("=" + temas[i][j]);
-										System.out.println("-" + temas[i][k]);
-										temas[i][j] = null;
-									}
+									temas[i][j] = temas[i][k];
+									contaPalavra++;
 									j++;
 								}
-								contaPalavra++;
 							}
-						if(contaPalavra >= 1 && contaExclusao == 0)
+						}
+						for(j = contaPalavra; j < 51; j++){
+							temas[i][j] = null;
+						}
+						if(contaExclusao == 0)
 							System.out.println("Palavra não encontrada.");
-						if(contaExclusao == 1)
-							System.out.println("Palavra excluída com sucesso do tema " + temas[i][0] + "!");
 					}else
 						System.out.println("Nenhuma palavra foi excluída.");
 					contaTema++;
@@ -417,15 +409,15 @@ public class jogoDaForca {
 		int opcao_menu;
 		String palavra;
 		Random rnd = new Random();
-		System.out.println("\n\n--------------------Jogar--------------------");
-		System.out.println("Os seguintes temas estão disponíveis:");
+		System.out.println("\n--------------------Jogar--------------------");
+		System.out.println("Os seguintes temas estão disponíveis:\n");
 		for(int i = 0; i < 50; i++) {
 			if(temas[i][0] != null) {
 				System.out.println(k + ". " + temas[i][0]);
 				k++;
 			}
 		}
-		System.out.print("Digite o numero do tema que deseja jogar:");
+		System.out.print("\nDigite o numero do tema que deseja jogar:");
 		opcao_menu = input.nextInt(); //Leitura da opção desejada
 		if(opcao_menu >= 1 && opcao_menu <= k-1) {
 			k = 0;
@@ -443,8 +435,9 @@ public class jogoDaForca {
 								if(temas[i][j] != null)
 									contaPalavra++;
 							}
-							palavra = temas[i][rnd.nextInt(contaPalavra)];
-							jogo(input, temas, palavra);
+						
+							palavra = temas[i][rnd.nextInt(contaPalavra)+1];
+							jogo(input, palavra, temas);
 						}
 					}
 				}
@@ -453,15 +446,112 @@ public class jogoDaForca {
 		}
 	}
 	
-	public static void jogo(Scanner input, String temas[][], String palavra) throws IOException {
-		int tamanho = palavra.length(), erros = 0;
-		
-		do{
-			for(int i = 0; i <= tamanho; i++) {
-				System.out.print("_ ");
-			}
-			System.out.print("Escolha uma letra:");
+	public static void jogo(Scanner input, String palavra, String temas[][]) throws IOException {
+			int tamanho = palavra.length(), erros = 0, j = 0, acerto = 0;
+			char r, p;
+			char letras[] = new char[50];
+			char chutes[] = new char[26];
+			char resposta[] = new char[tamanho+1];
+			boolean vitoria = false;
 			
-		}while(erros < 5);
+			for(int i = 0; i < tamanho; i++) {
+				p = palavra.charAt(i);
+				letras[i] = p;
+			}
+			
+			for(int k = 0; k < 26; k++) {
+				chutes[k] = ' ';
+				if(k <= tamanho)
+					resposta[k] = ' ';
+			}
+			
+			do{
+				System.out.print("\nEscolha uma letra:");
+				r = input.next().charAt(0);
+				r = Character.toUpperCase(r);
+				System.out.println("");
+				for(int k = 0; k < 26; k++) {
+					if(chutes[k] == r){
+						System.out.println("Essa letra já foi chutada.");
+						break;
+					}else if(chutes[k] == ' ') {
+						chutes[j] = r;
+						j++;
+						acerto = printaPalavra(palavra, tamanho, letras, resposta, r, acerto);
+						if(acerto == 0) {
+							erros++;
+							System.out.println("Letra errada! Voce ainda possui " + (5-erros) + " tentativa(s).");
+						}
+						break;
+					}
+				}
+				vitoria = verificaVitoria(resposta, letras, vitoria, tamanho);
+			}while(erros < 5 && !vitoria);
+			
+			if(erros == 5) {
+				System.out.print("\n\nVoce perdeu! Deseja jogar novamente?\n1.Sim\n2.Nao\n\n");
+				verificaRetry(input, temas);
+			}
+			
+			if(vitoria){
+				System.out.println("\n\nParabens! Voce acertou a palavra, deseja jogar novamente?\n1.Sim\n2.Nao\n\n");
+				verificaRetry(input, temas);
+			}
 	}	
+	
+	public static int printaPalavra(String palavra, int tamanho, char letras[], char resposta[],char r, int acerto) {
+		acerto = 0;
+		
+		
+		
+		for(int i = 0; i < tamanho; i++) {
+			if(palavra.charAt(i) != ' ') {
+				if(resposta[i] == ' '){
+					if(palavra.charAt(i) == r) {
+						resposta[i] = r;
+						System.out.print(resposta[i]);
+						acerto++;
+					}else{
+						System.out.print("_ ");// Printa as linhas restantes nao adivinhadas
+					}
+				}else{
+					System.out.print(resposta[i]);// Se já tiver sido chutada a letra, printa ela
+				}
+			}else
+				System.out.print(" ");// Se for um espaço em branco na palavra, printa o espaco
+		}
+		System.out.println("");
+		
+		return acerto;
+	}
+	
+	public static boolean verificaVitoria(char resposta[], char letras [], boolean vitoria, int tamanho) {
+		int acerto = 0;
+		
+		for(int i = 0; i < tamanho; i++) {
+			if(resposta[i] == letras[i]) {
+				acerto++;
+			}
+		}
+		
+		if(acerto == tamanho) {
+			vitoria = true;
+		}
+		
+		return vitoria;
+	}
+	
+	public static void verificaRetry (Scanner input, String temas[][]) throws IOException {
+		char r;
+		
+		do {
+			System.out.print("Digite a opção desejada:");
+			r = input.next().charAt(0);
+			r = Character.toUpperCase(r);
+		}while(r != '1' && r != '2');
+		if(r == '1') {
+			menuJogar(input, temas);
+		}
+		
+	}
 }
