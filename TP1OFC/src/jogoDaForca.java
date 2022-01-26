@@ -319,7 +319,7 @@ public class jogoDaForca {
 						input.nextLine();
 						busca = input.nextLine().toUpperCase().trim();
 						for(int k = 1; k < 51; k++) 
-//							if(temas[i][k] != null) {
+							if(temas[i][k] != null) {
 								if(temas[i][k].equals(busca)) {
 									System.out.println("Palavra excluída com sucesso do tema " + temas[i][0] + "!");
 								}else{
@@ -335,7 +335,7 @@ public class jogoDaForca {
 									j++;
 								}
 								contaPalavra++;
-//							}
+							}
 						if(contaPalavra >= 1 && contaExclusao == 0)
 							System.out.println("Palavra não encontrada.");
 						if(contaExclusao == 1)
