@@ -74,14 +74,6 @@ public class jogoDaForca {
 		Scanner input = new Scanner (System.in);
 		System.out.println("Bem vindo(a) ao Jogo da Forca 2022!\n\n");
 		do {
-			for(int i = 0; i < 10; i++) {
-				System.out.print(temas[i][0] + " ");
-				for(int j = 1; j < 15; j++) {
-					System.out.print(temas[i][j] + " ");
-				}
-					System.out.println("");
-			}
-				
 				c = menu(opcao_menu, input);// Abrir o menu
 				switch(c) {
 				case '1':
