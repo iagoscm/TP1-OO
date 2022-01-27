@@ -4,7 +4,6 @@ import java.io.IOException;// Para dar pausa no console
 import java.util.random.*;
 
 
-// Ajustar excluirTema para não excluir tema com palavras
 
 public class jogoDaForca {
 
@@ -75,6 +74,14 @@ public class jogoDaForca {
 		Scanner input = new Scanner (System.in);
 		System.out.println("Bem vindo(a) ao Jogo da Forca 2022!\n\n");
 		do {
+			for(int i = 0; i < 10; i++) {
+				System.out.print(temas[i][0] + " ");
+				for(int j = 1; j < 15; j++) {
+					System.out.print(temas[i][j] + " ");
+				}
+					System.out.println("");
+			}
+				
 				c = menu(opcao_menu, input);// Abrir o menu
 				switch(c) {
 				case '1':
@@ -150,60 +157,65 @@ public class jogoDaForca {
 	}
 	
 	public static String[][] cadastrarTema(String temas[][], Scanner input){
-		int contadorTema = 0, k = 1;
+		int contadorTema = 0;
+		String tema;
+		
+		System.out.print("\nDigite o tema que deseja cadastrar:");
+		input.nextLine();
+		tema = input.nextLine().toUpperCase().trim();
 		
 		for(int i = 0; i < 50; i++) {
-			if(temas[i][0] == null && contadorTema == 0) {
-				System.out.print("\nDigite o tema que deseja cadastrar:");
-				input.nextLine();
-				temas[i][0] = input.nextLine().toUpperCase().trim();
-				k = i;
-				contadorTema++;//Para controlar o cadastro de tema
-				System.out.println("\nTema cadastrado com sucesso!!");
-			} 
-		}
-		
-		if(contadorTema == 0)
-			System.out.println("O número máximo de temas já foi alcançado.\n");
-		
-		for(int i = 0; i < 50; i++) {
-			if(temas[i][0] != null && i != k){
-				if(temas[k][0].equals(temas[i][0])){
-					System.out.println("Esse tema já existe.");
-					temas[k][0] = null;
-					i = 50;
+			if(temas[i][0] != null){
+				if(temas[i][0].equals(tema)){
+					System.out.println("\nEsse tema já existe.");
+					break;
+				}
+			}else {
+				if(temas[i][0] == null) {
+					temas[i][0] = tema;
+					System.out.println("\nTema cadastrado com sucesso!!");
 				}
 			}
+			contadorTema++;
 		}
+		
+		if(contadorTema == 50)
+			System.out.println("O número máximo de temas já foi alcançado.\n");
+		
 		return temas;
 	}
 	
 	public static String[][] excluirTema(String temas[][], Scanner input){
 		String busca;
-		int contadorTema = 0, j = 0;
+		int contadorTema = 0, j = 0, contadorExclusao = 0;
 		
 		System.out.print("\nDigite o tema que deseja excluir:");
 		input.nextLine();
 		busca = input.nextLine().toUpperCase().trim();
-		System.out.println(busca);
 		
 		for(int i = 0; i < 50; i++) {
 			if(temas[i][0] != null) {
-				if(temas[i][0].equals(busca)) {
+				if(temas[i][0].equals(busca) && temas[i][1] == null) {
 					System.out.println("Tema excluído com sucesso!\n");
+					contadorExclusao++;
+				}else if(temas[i][0].equals(busca) && temas[i][1] != null){
+					System.out.println("Exclua as palavras do tema antes de excluir o mesmo.\n");
 					contadorTema++;
-				}else{
+					break;
+				}else {
 					temas[j][0] = temas[i][0];
-					for(int k = 1; k < 51; k++) {
-						temas[j][k] = temas [i][k];
-					}
 					j++;
+					contadorTema++;
 				}
-			} 
+			}
 		}
 		
-		if (contadorTema == 0)
-			System.out.println("Esse tema não foi cadastrado.");
+		for(j = contadorTema; j < 50; j++) {
+			temas[j][0] = null;
+		}
+		
+		if (contadorExclusao == 0)
+			System.out.println("\nEsse tema não foi cadastrado.");
 	
 		
 		return temas;
@@ -253,31 +265,34 @@ public class jogoDaForca {
 		for(int i = 0; i < 50; i++) {
 			if(temas[i][0] != null) {
 				if(temas[i][0].equals(busca)){
-					System.out.print("O tema encontrado foi o seguinte: " + temas[i][0] + ";");
+					System.out.print("O tema encontrado foi o seguinte: " + temas[i][0] + ".");
 					do {
-						System.out.print("\nDeseja cadastrar uma palavra neste tema?\n1. Sim\n2. Não\n\nDigite a opção desejada:");
+						System.out.print("\n\nDeseja cadastrar uma palavra neste tema?\n1. Sim\n2. Não\n\nDigite a opção desejada:");
 						opcao = input.next().charAt(0);
 					}while(opcao != '1' && opcao != '2');
 					if(opcao == '1') {
-						System.out.print("Digite a palavra que deseja cadastrar:");
+						System.out.print("\nDigite a palavra que deseja cadastrar:");
 						input.nextLine();
 						busca = input.nextLine().toUpperCase().trim();
-						for(int k = 1; k < 51; k++) 
-							if(temas[i][k] != null) 
-								if(temas[i][k].equals(busca)) 
-									contaPalavra++;
-						if(contaPalavra == 0) {
+						if(!busca.chars().allMatch(Character::isDigit)){
 							for(int k = 1; k < 51; k++)
-								if(temas[i][k] == null && contaPalavra == 0) {
-									temas[i][k] = busca;
-									contaPalavra++;
-								}
-							if(contaPalavra == 1) {
-								System.out.println("Palavra cadastrada com sucesso no tema " + temas[i][0] + "!");
+								if(temas[i][k] != null) 
+									if(temas[i][k].equals(busca)) 
+										contaPalavra++;
+							if(contaPalavra == 0) {
+								for(int k = 1; k < 51; k++)
+									if(temas[i][k] == null && contaPalavra == 0) {
+										temas[i][k] = busca;
+										contaPalavra++;
+									}
+								if(contaPalavra == 1) {
+									System.out.println("\nPalavra cadastrada com sucesso no tema " + temas[i][0] + "!");
+								}else
+									System.out.println("ERRO DESCONHECIDO");
 							}else
-								System.out.println("ERRO DESCONHECIDO");
-						}else
-							System.out.println("Essa palavra já está cadastrada nesse tema.");
+								System.out.println("Essa palavra já está cadastrada nesse tema.");
+					}else
+						System.out.println("Nao sao permitidos numeros na String.");
 					}else
 						System.out.println("Nenhuma palavra foi cadastrada.");
 					
@@ -361,7 +376,7 @@ public class jogoDaForca {
 				if(temas[i][k] != null) {
 					resultado = temas[i][k].replaceAll("( )+", " ");
 					if(resultado.equals(busca)) {
-						System.out.println("Palavra encontrada no tema " + temas[i][0] + ".");
+						System.out.println("\nPalavra encontrada no tema " + temas[i][0] + ".");
 						contadorPalavra++;
 					}	
 				}
@@ -369,7 +384,7 @@ public class jogoDaForca {
 		}
 		
 		if(contadorPalavra == 0) {
-			System.out.println("Palavra não encontrada.");
+			System.out.println("\nPalavra não encontrada.");
 		}
 		
 		return temas;
@@ -387,7 +402,7 @@ public class jogoDaForca {
 			if(temas[i][0] != null) {
 				resultado = temas[i][0].replaceAll("( )+", " ");
 				if(busca.equals(resultado)) {
-					System.out.println("As palavras cadastradas nesse tema são:");
+					System.out.println("\nAs palavras cadastradas nesse tema são:");
 					for(int k = 1; k < 51; k++) {
 						if(temas[i][k] != null)
 							System.out.println(temas[i][k]);
@@ -398,7 +413,7 @@ public class jogoDaForca {
 		}
 		
 		if(contadorTema == 0) {
-			System.out.println("Tema não encontrada.");
+			System.out.println("\nTema não encontrado.");
 		}
 		
 		return temas;
@@ -406,7 +421,8 @@ public class jogoDaForca {
 	
 	public static void menuJogar(Scanner input, String temas[][]) throws IOException {
 		int k = 1, contaPalavra = 0;
-		int opcao_menu;
+		String opcao_menu;
+		int opcao;
 		String palavra;
 		Random rnd = new Random();
 		System.out.println("\n--------------------Jogar--------------------");
@@ -417,15 +433,22 @@ public class jogoDaForca {
 				k++;
 			}
 		}
+		input.nextLine();
 		System.out.print("\nDigite o numero do tema que deseja jogar:");
-		opcao_menu = input.nextInt(); //Leitura da opção desejada
-		if(opcao_menu >= 1 && opcao_menu <= k-1) {
+		opcao_menu = input.nextLine(); //Leitura da opção desejada
+		System.out.println(opcao_menu);
+		opcao = Integer.parseInt(String.valueOf(opcao_menu));
+		if(opcao >= 1 && opcao <= k) {
 			k = 0;
 				for(int i = 0; i < 50; i++) {
 					if(temas[i][0] != null) {
 						k++;
-						if(k == opcao_menu) {
+						if(k == opcao) {
 							System.out.println("\nO tema escolhido foi: " + temas[i][0] + "!\n");
+							if(temas[i][1] == null) {
+								System.out.println("O tema nao possui palavras cadastradas.");
+								break;
+							}
 							System.out.println("Você provavelmente sabe como funciona o jogo da forca: te é apresentado um tema\n"
 									+ "e você tenta descobrir a palavra daquele tema dando letras. A cada letra que não existe \n"
 									+ "na palavra, se é contabilizado um erro, e você pode errar no máximo cinco vezes! Preparado?\n");
