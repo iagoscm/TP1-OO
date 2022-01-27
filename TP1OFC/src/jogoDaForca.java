@@ -1,7 +1,7 @@
 import java.util.Random;
 import java.util.Scanner; // Para a leitura de dados
 import java.io.IOException;// Para dar pausa no console
-import java.util.random.*;
+import java.util.random.*;// Para gerar numeros aleatorios pro jogo
 
 
 
